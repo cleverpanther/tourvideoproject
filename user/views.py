@@ -101,10 +101,11 @@ class UserLoginAPIView(APIView):
                 return Response({"status": False, "data": {"msg": "Please wait until admin allows you"}}, status=status.HTTP_423_LOCKED)
             else:
                 user = validated_data.pop('user')
-                print(user.tourplace)
-                user.tourplace = tourplace
-                user.save()
-                return Response({"status": True, "data": serializer.validated_data}, status=status.HTTP_200_OK)
+                if user.usertype == 3:
+                    user.tourplace = [tourplace]
+                    validated_data["tourplace"] = [tourplace]
+                    user.save()
+                return Response({"status": True, "data": validated_data}, status=status.HTTP_200_OK)
         return Response({"status": False, "data": {"msg": "Invalid email or password"}}, status=status.HTTP_406_NOT_ACCEPTABLE)
     
 class UserUpdateAPIView(APIView):
